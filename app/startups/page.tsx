@@ -8,91 +8,9 @@ import { FilterChips } from "@/components/filter-chips"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, ChevronLeft, ChevronRight } from "lucide-react"
-
-const DUMMY_STARTUPS = [
-  {
-    id: "1",
-    name: "FinFlow",
-    logo: "/fintech-logo.jpg",
-    description: "AI-powered financial planning for small business owners. Automated insights and forecasting.",
-    tags: ["FinTech", "AI"],
-    fundingGoal: "$250K",
-    stage: "Seed",
-  },
-  {
-    id: "2",
-    name: "AgriMind",
-    logo: "/agriculture-logo.jpg",
-    description: "Precision agriculture using satellite data and machine learning for crop optimization.",
-    tags: ["AgriTech", "ML"],
-    fundingGoal: "$500K",
-    stage: "Series A",
-  },
-  {
-    id: "3",
-    name: "HealthSync",
-    logo: "/healthtech-logo.jpg",
-    description: "Real-time health monitoring platform connecting patients with healthcare providers.",
-    tags: ["HealthTech", "IoT"],
-    fundingGoal: "$1M",
-    stage: "Series A",
-  },
-  {
-    id: "4",
-    name: "CleanEnergy Co",
-    logo: "/cleantech-logo.jpg",
-    description: "Sustainable energy solutions for commercial buildings using renewable technologies.",
-    tags: ["GreenTech", "Energy"],
-    fundingGoal: "$750K",
-    stage: "Seed",
-  },
-  {
-    id: "5",
-    name: "EduSmart",
-    logo: "/edtech-logo.jpg",
-    description: "Personalized learning platform powered by AI tutoring and adaptive curriculum.",
-    tags: ["EdTech", "AI"],
-    fundingGoal: "$300K",
-    stage: "Pre-Seed",
-  },
-  {
-    id: "6",
-    name: "LogisticAI",
-    logo: "/logistics-logo.jpg",
-    description: "Supply chain optimization using predictive analytics and route optimization.",
-    tags: ["Logistics", "AI"],
-    fundingGoal: "$1.2M",
-    stage: "Series A",
-  },
-  {
-    id: "7",
-    name: "SpaceFlow",
-    logo: "/spacetech-logo.jpg",
-    description: "Satellite IoT platform for real-time global connectivity and data collection.",
-    tags: ["SpaceTech", "IoT"],
-    fundingGoal: "$2M",
-    stage: "Series B",
-  },
-  {
-    id: "8",
-    name: "RetailNow",
-    logo: "/retail-logo.jpg",
-    description: "Omnichannel retail platform unifying online and physical store experiences.",
-    tags: ["RetailTech", "E-commerce"],
-    fundingGoal: "$600K",
-    stage: "Seed",
-  },
-  {
-    id: "9",
-    name: "CyberGuard",
-    logo: "/cybersecurity-logo.jpg",
-    description: "Enterprise cybersecurity platform with AI-driven threat detection and response.",
-    tags: ["CyberSecurity", "AI"],
-    fundingGoal: "$1.5M",
-    stage: "Series A",
-  },
-]
+import { STARTUP_DATA } from "@/lib/startup-data"
 
 const INDUSTRIES = [
   "FinTech",
@@ -112,16 +30,21 @@ export default function StartupsPage() {
   const [selectedIndustry, setSelectedIndustry] = useState("")
   const [selectedStage, setSelectedStage] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [verificationFilter, setVerificationFilter] = useState<"all" | "verified" | "pending">("all")
   const itemsPerPage = 6
 
-  // Filter startups
-  const filteredStartups = DUMMY_STARTUPS.filter((startup) => {
+  const filteredStartups = STARTUP_DATA.filter((startup) => {
     const matchesSearch =
       startup.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       startup.description.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesIndustry = !selectedIndustry || startup.tags.includes(selectedIndustry)
     const matchesStage = !selectedStage || startup.stage === selectedStage
-    return matchesSearch && matchesIndustry && matchesStage
+    const matchesVerification =
+      verificationFilter === "all" ||
+      (verificationFilter === "verified" && startup.verificationStatus === "verified") ||
+      (verificationFilter === "pending" && startup.verificationStatus === "pending")
+
+    return matchesSearch && matchesIndustry && matchesStage && matchesVerification
   })
 
   const totalPages = Math.ceil(filteredStartups.length / itemsPerPage)
@@ -130,10 +53,13 @@ export default function StartupsPage() {
   const activeFilters: string[] = []
   if (selectedIndustry) activeFilters.push(selectedIndustry)
   if (selectedStage) activeFilters.push(selectedStage)
+  if (verificationFilter !== "all") activeFilters.push(verificationFilter === "verified" ? "Verified" : "Pending")
 
   const handleRemoveFilter = (filter: string) => {
     if (filter === selectedIndustry) setSelectedIndustry("")
     if (filter === selectedStage) setSelectedStage("")
+    if (filter === "Verified") setVerificationFilter("all")
+    if (filter === "Pending") setVerificationFilter("all")
     setCurrentPage(1)
   }
 
@@ -141,8 +67,12 @@ export default function StartupsPage() {
     setSearchQuery("")
     setSelectedIndustry("")
     setSelectedStage("")
+    setVerificationFilter("all")
     setCurrentPage(1)
   }
+
+  const verifiedCount = STARTUP_DATA.filter((s) => s.verificationStatus === "verified").length
+  const pendingCount = STARTUP_DATA.filter((s) => s.verificationStatus === "pending").length
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -152,7 +82,19 @@ export default function StartupsPage() {
         {/* Header */}
         <div className="mb-12 animate-fade-in">
           <h1 className="text-4xl font-bold text-foreground mb-2">Discover Startups</h1>
-          <p className="text-muted-foreground">Browse {DUMMY_STARTUPS.length} exceptional companies raising capital</p>
+          <p className="text-muted-foreground">
+            Browse {STARTUP_DATA.length} exceptional companies • {verifiedCount} verified • {pendingCount} under review
+          </p>
+        </div>
+
+        <div className="mb-8">
+          <Tabs value={verificationFilter} onValueChange={(v) => setVerificationFilter(v as any)}>
+            <TabsList className="grid grid-cols-3 w-fit bg-card border border-border">
+              <TabsTrigger value="all">All Startups</TabsTrigger>
+              <TabsTrigger value="verified">Verified ({verifiedCount})</TabsTrigger>
+              <TabsTrigger value="pending">Under Review ({pendingCount})</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
 
         {/* Search and Filters */}
@@ -178,7 +120,7 @@ export default function StartupsPage() {
               <Select
                 value={selectedIndustry}
                 onValueChange={(value) => {
-                  setSelectedIndustry(value)
+                  setSelectedIndustry(value === "allIndustries" ? "" : value)
                   setCurrentPage(1)
                 }}
               >
@@ -198,7 +140,7 @@ export default function StartupsPage() {
               <Select
                 value={selectedStage}
                 onValueChange={(value) => {
-                  setSelectedStage(value)
+                  setSelectedStage(value === "allStages" ? "" : value)
                   setCurrentPage(1)
                 }}
               >

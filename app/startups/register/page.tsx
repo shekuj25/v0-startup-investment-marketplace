@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { VerificationBadge } from "@/components/verification-badge"
 import { X, Plus, Upload, CheckCircle } from "lucide-react"
+import { addRegisteredStartup } from "@/lib/startup-data"
 
 const INDUSTRIES = [
   "FinTech",
@@ -48,7 +49,6 @@ export default function RegisterPage() {
   })
 
   const [team, setTeam] = useState<TeamMember[]>([{ id: "1", name: "", role: "", email: "" }])
-
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [documentFile, setDocumentFile] = useState<File | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -106,6 +106,7 @@ export default function RegisterPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (validateForm()) {
+      addRegisteredStartup(formData, team)
       setStep("success")
     }
   }
