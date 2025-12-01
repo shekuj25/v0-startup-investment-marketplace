@@ -9,44 +9,51 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent via-accent to-accent/60 flex items-center justify-center shadow-lg shadow-accent/20">
+              <Zap className="w-5 h-5 text-white font-bold" />
             </div>
-            <span className="font-bold text-lg text-foreground group-hover:text-accent transition-colors">Venture</span>
+            <span className="font-bold text-lg text-foreground group-hover:text-accent transition-colors duration-300">
+              Venture
+            </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/startups" className="text-sm text-foreground hover:text-accent transition-colors font-medium">
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-10">
+            <Link
+              href="/startups"
+              className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-200"
+            >
               Marketplace
             </Link>
             <Link
               href="/startups/register"
-              className="text-sm text-foreground hover:text-accent transition-colors font-medium"
+              className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-200"
             >
-              Register Startup
+              Register
             </Link>
             <Link
-              href="/#how-it-works"
-              className="text-sm text-foreground hover:text-accent transition-colors font-medium"
+              href="/#faq"
+              className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-200"
             >
-              How it Works
-            </Link>
-            <Link href="/#faq" className="text-sm text-foreground hover:text-accent transition-colors font-medium">
               FAQ
             </Link>
           </nav>
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="outline" size="sm" className="rounded-lg font-medium bg-transparent" asChild>
               <Link href="/startups">Browse</Link>
             </Button>
-            <Button size="sm" className="bg-accent hover:bg-accent/90" asChild>
-              <Link href="/startups/register">List Your Startup</Link>
+            <Button
+              size="sm"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground font-medium rounded-lg"
+              asChild
+            >
+              <Link href="/startups/register">Get Started</Link>
             </Button>
           </div>
 
@@ -58,35 +65,36 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden py-4 border-t border-border animate-fade-in">
-            <nav className="flex flex-col gap-4">
+          <div className="md:hidden py-4 border-t border-border/40 animate-fade-in">
+            <nav className="flex flex-col gap-3">
               <Link
                 href="/startups"
-                className="text-sm text-foreground hover:text-accent transition-colors font-medium"
+                className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors py-2"
               >
                 Marketplace
               </Link>
               <Link
                 href="/startups/register"
-                className="text-sm text-foreground hover:text-accent transition-colors font-medium"
+                className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors py-2"
               >
-                Register Startup
+                Register
               </Link>
               <Link
-                href="/#how-it-works"
-                className="text-sm text-foreground hover:text-accent transition-colors font-medium"
+                href="/#faq"
+                className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors py-2"
               >
-                How it Works
-              </Link>
-              <Link href="/#faq" className="text-sm text-foreground hover:text-accent transition-colors font-medium">
                 FAQ
               </Link>
-              <div className="flex flex-col gap-2 pt-2 border-t border-border">
-                <Button variant="outline" size="sm" className="w-full bg-transparent" asChild>
+              <div className="flex flex-col gap-2 pt-3 border-t border-border/40">
+                <Button variant="outline" size="sm" className="w-full bg-transparent rounded-lg font-medium" asChild>
                   <Link href="/startups">Browse</Link>
                 </Button>
-                <Button size="sm" className="w-full bg-accent hover:bg-accent/90" asChild>
-                  <Link href="/startups/register">List Your Startup</Link>
+                <Button
+                  size="sm"
+                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-medium rounded-lg"
+                  asChild
+                >
+                  <Link href="/startups/register">Get Started</Link>
                 </Button>
               </div>
             </nav>
