@@ -2,11 +2,13 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Menu, X, Zap } from "lucide-react"
+import { Menu, X, Zap, LogOut } from "lucide-react"
 import { useState } from "react"
+import { useAuth } from "@/lib/auth-context"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const { user, logout } = useAuth()
 
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/40">
@@ -35,26 +37,47 @@ export function Header() {
             >
               Register
             </Link>
-            <Link
-              href="/#faq"
-              className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-200"
-            >
-              FAQ
-            </Link>
+            {user && (
+              <Link
+                href="/dashboard"
+                className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-200"
+              >
+                Dashboard
+              </Link>
+            )}
           </nav>
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="outline" size="sm" className="rounded-lg font-medium bg-transparent" asChild>
-              <Link href="/startups">Browse</Link>
-            </Button>
-            <Button
-              size="sm"
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-medium rounded-lg"
-              asChild
-            >
-              <Link href="/startups/register">Get Started</Link>
-            </Button>
+            {user ? (
+              <>
+                <Button variant="outline" size="sm" className="rounded-lg font-medium bg-transparent" asChild>
+                  <Link href="/dashboard">{user.companyName}</Link>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="rounded-lg font-medium bg-transparent gap-2"
+                  onClick={logout}
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" size="sm" className="rounded-lg font-medium bg-transparent" asChild>
+                  <Link href="/startups">Browse</Link>
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-accent hover:bg-accent/90 text-accent-foreground font-medium rounded-lg"
+                  asChild
+                >
+                  <Link href="/startups/register">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -79,23 +102,53 @@ export function Header() {
               >
                 Register
               </Link>
-              <Link
-                href="/#faq"
-                className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors py-2"
-              >
-                FAQ
-              </Link>
-              <div className="flex flex-col gap-2 pt-3 border-t border-border/40">
-                <Button variant="outline" size="sm" className="w-full bg-transparent rounded-lg font-medium" asChild>
-                  <Link href="/startups">Browse</Link>
-                </Button>
-                <Button
-                  size="sm"
-                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-medium rounded-lg"
-                  asChild
+              {user && (
+                <Link
+                  href="/dashboard"
+                  className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors py-2"
                 >
-                  <Link href="/startups/register">Get Started</Link>
-                </Button>
+                  Dashboard
+                </Link>
+              )}
+              <div className="flex flex-col gap-2 pt-3 border-t border-border/40">
+                {user ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full bg-transparent rounded-lg font-medium"
+                      asChild
+                    >
+                      <Link href="/dashboard">{user.companyName}</Link>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full bg-transparent rounded-lg font-medium"
+                      onClick={logout}
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full bg-transparent rounded-lg font-medium"
+                      asChild
+                    >
+                      <Link href="/startups">Browse</Link>
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-medium rounded-lg"
+                      asChild
+                    >
+                      <Link href="/startups/register">Get Started</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

@@ -1,8 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
+import { useAuth } from "@/lib/auth-context"
+import { useRouter } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -36,6 +37,8 @@ interface TeamMember {
 type FormStep = "form" | "success"
 
 export default function RegisterPage() {
+  const router = useRouter()
+  const { user, login } = useAuth()
   const [step, setStep] = useState<FormStep>("form")
   const [formData, setFormData] = useState({
     companyName: "",
@@ -106,8 +109,18 @@ export default function RegisterPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (validateForm()) {
-      addRegisteredStartup(formData, team)
+      // Register user in auth system when startup is registered
+      const userId = `user-${Date.now()}`
+      login(formData.email, formData.companyName, "founder")
+
+      // Add startup to data
+      addRegisteredStartup(formData, team, userId)
       setStep("success")
+
+      // Redirect after showing success
+      setTimeout(() => {
+        router.push("/dashboard")
+      }, 3000)
     }
   }
 
@@ -164,16 +177,11 @@ export default function RegisterPage() {
             </div>
 
             <div className="flex flex-col gap-3">
-              <Button size="lg" className="bg-accent hover:bg-accent/90" onClick={() => (window.location.href = "/")}>
-                Back to Home
+              <Button size="lg" className="bg-accent hover:bg-accent/90" asChild>
+                <a href="/dashboard">Go to Dashboard</a>
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-border hover:bg-muted bg-transparent"
-                onClick={() => (window.location.href = "/startups")}
-              >
-                Browse Other Startups
+              <Button size="lg" variant="outline" className="border-border hover:bg-muted bg-transparent" asChild>
+                <a href="/startups">Browse Other Startups</a>
               </Button>
             </div>
           </Card>

@@ -8,7 +8,6 @@ import { FilterChips } from "@/components/filter-chips"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { STARTUP_DATA } from "@/lib/startup-data"
 
@@ -30,7 +29,6 @@ export default function StartupsPage() {
   const [selectedIndustry, setSelectedIndustry] = useState("")
   const [selectedStage, setSelectedStage] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const [verificationFilter, setVerificationFilter] = useState<"all" | "verified" | "pending">("all")
   const itemsPerPage = 6
 
   const filteredStartups = STARTUP_DATA.filter((startup) => {
@@ -39,12 +37,9 @@ export default function StartupsPage() {
       startup.description.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesIndustry = !selectedIndustry || startup.tags.includes(selectedIndustry)
     const matchesStage = !selectedStage || startup.stage === selectedStage
-    const matchesVerification =
-      verificationFilter === "all" ||
-      (verificationFilter === "verified" && startup.verificationStatus === "verified") ||
-      (verificationFilter === "pending" && startup.verificationStatus === "pending")
+    const isVerified = startup.verificationStatus === "verified"
 
-    return matchesSearch && matchesIndustry && matchesStage && matchesVerification
+    return matchesSearch && matchesIndustry && matchesStage && isVerified
   })
 
   const totalPages = Math.ceil(filteredStartups.length / itemsPerPage)
@@ -53,13 +48,10 @@ export default function StartupsPage() {
   const activeFilters: string[] = []
   if (selectedIndustry) activeFilters.push(selectedIndustry)
   if (selectedStage) activeFilters.push(selectedStage)
-  if (verificationFilter !== "all") activeFilters.push(verificationFilter === "verified" ? "Verified" : "Pending")
 
   const handleRemoveFilter = (filter: string) => {
     if (filter === selectedIndustry) setSelectedIndustry("")
     if (filter === selectedStage) setSelectedStage("")
-    if (filter === "Verified") setVerificationFilter("all")
-    if (filter === "Pending") setVerificationFilter("all")
     setCurrentPage(1)
   }
 
@@ -67,12 +59,10 @@ export default function StartupsPage() {
     setSearchQuery("")
     setSelectedIndustry("")
     setSelectedStage("")
-    setVerificationFilter("all")
     setCurrentPage(1)
   }
 
   const verifiedCount = STARTUP_DATA.filter((s) => s.verificationStatus === "verified").length
-  const pendingCount = STARTUP_DATA.filter((s) => s.verificationStatus === "pending").length
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -81,20 +71,8 @@ export default function StartupsPage() {
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-12 animate-fade-in">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Discover Startups</h1>
-          <p className="text-muted-foreground">
-            Browse {STARTUP_DATA.length} exceptional companies • {verifiedCount} verified • {pendingCount} under review
-          </p>
-        </div>
-
-        <div className="mb-8">
-          <Tabs value={verificationFilter} onValueChange={(v) => setVerificationFilter(v as any)}>
-            <TabsList className="grid grid-cols-3 w-fit bg-card border border-border">
-              <TabsTrigger value="all">All Startups</TabsTrigger>
-              <TabsTrigger value="verified">Verified ({verifiedCount})</TabsTrigger>
-              <TabsTrigger value="pending">Under Review ({pendingCount})</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Verified Startups</h1>
+          <p className="text-muted-foreground">Browse {verifiedCount} verified companies raising capital from Africa</p>
         </div>
 
         {/* Search and Filters */}

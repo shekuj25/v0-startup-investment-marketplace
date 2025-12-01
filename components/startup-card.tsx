@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, CheckCircle, Clock } from "lucide-react"
+import { ArrowRight, CheckCircle, Clock, Users } from "lucide-react"
 import Image from "next/image"
 import type { Startup } from "@/lib/startup-data"
 
@@ -73,6 +73,13 @@ export function StartupCard(startup: Startup) {
                 />
               </div>
             </div>
+
+            {startup.investorCount !== undefined && startup.investorCount > 0 && (
+              <div className="mb-4 flex items-center gap-2 text-xs">
+                <Users className="w-3.5 h-3.5 text-accent" />
+                <span className="text-muted-foreground">{startup.investorCount} investors interested</span>
+              </div>
+            )}
           </div>
 
           {/* Footer */}

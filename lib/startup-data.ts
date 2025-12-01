@@ -26,6 +26,8 @@ export interface Startup {
     image: string
     linkedIn: string
   }>
+  investorCount?: number
+  ownerId?: string
 }
 
 // Base startup data
@@ -71,6 +73,7 @@ const baseStartups: Startup[] = [
         linkedIn: "https://linkedin.com",
       },
     ],
+    investorCount: 12,
   },
   {
     id: "2",
@@ -105,6 +108,7 @@ const baseStartups: Startup[] = [
         linkedIn: "https://linkedin.com",
       },
     ],
+    investorCount: 8,
   },
   {
     id: "3",
@@ -135,6 +139,7 @@ const baseStartups: Startup[] = [
         linkedIn: "https://linkedin.com",
       },
     ],
+    investorCount: 15,
   },
   {
     id: "4",
@@ -163,6 +168,7 @@ const baseStartups: Startup[] = [
         linkedIn: "https://linkedin.com",
       },
     ],
+    investorCount: 0,
   },
   {
     id: "5",
@@ -193,6 +199,7 @@ const baseStartups: Startup[] = [
         linkedIn: "https://linkedin.com",
       },
     ],
+    investorCount: 0,
   },
   {
     id: "6",
@@ -228,6 +235,7 @@ const baseStartups: Startup[] = [
         linkedIn: "https://linkedin.com",
       },
     ],
+    investorCount: 18,
   },
   {
     id: "7",
@@ -269,6 +277,7 @@ const baseStartups: Startup[] = [
         linkedIn: "https://linkedin.com",
       },
     ],
+    investorCount: 24,
   },
   {
     id: "8",
@@ -299,6 +308,7 @@ const baseStartups: Startup[] = [
         linkedIn: "https://linkedin.com",
       },
     ],
+    investorCount: 0,
   },
   {
     id: "9",
@@ -335,6 +345,7 @@ const baseStartups: Startup[] = [
         linkedIn: "https://linkedin.com",
       },
     ],
+    investorCount: 21,
   },
 ]
 
@@ -353,7 +364,7 @@ export function getStartupData(): Startup[] {
   return baseStartups
 }
 
-export function addRegisteredStartup(formData: any, team: any[]): Startup {
+export function addRegisteredStartup(formData: any, team: any[], userId: string): Startup {
   const newStartup: Startup = {
     id: `user-${Date.now()}`,
     name: formData.companyName,
@@ -379,6 +390,8 @@ export function addRegisteredStartup(formData: any, team: any[]): Startup {
       image: "/team-member.jpg",
       linkedIn: "https://linkedin.com",
     })),
+    investorCount: 0,
+    ownerId: userId,
   }
 
   if (typeof window !== "undefined") {
