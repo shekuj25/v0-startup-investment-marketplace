@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { VerificationBadge } from "@/components/verification-badge"
 import { X, Plus, Upload, CheckCircle } from "lucide-react"
 
 const INDUSTRIES = [
@@ -105,7 +106,6 @@ export default function RegisterPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (validateForm()) {
-      // Simulate submission
       setStep("success")
     }
   }
@@ -116,40 +116,65 @@ export default function RegisterPage() {
         <Header />
 
         <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
-          <Card className="border border-border bg-card p-12 text-center space-y-6 animate-scale-in">
+          <Card className="border border-border bg-card p-12 text-center space-y-8 animate-fade-in">
             <div className="flex justify-center">
               <div className="w-16 h-16 rounded-full bg-accent/10 border-2 border-accent flex items-center justify-center">
                 <CheckCircle className="w-8 h-8 text-accent" />
               </div>
             </div>
 
-            <h1 className="text-3xl font-bold text-foreground">Application Submitted!</h1>
-            <p className="text-muted-foreground text-lg">
-              Thank you for registering {formData.companyName}. Our team will review your application and get back to
-              you within 48 hours.
-            </p>
+            <div className="space-y-3">
+              <h1 className="text-3xl font-bold text-foreground">Application Submitted!</h1>
+              <p className="text-muted-foreground text-lg">
+                Thank you for registering <span className="font-semibold">{formData.companyName}</span>
+              </p>
+            </div>
+
+            <VerificationBadge status="pending" daysRemaining={2} />
 
             <div className="bg-accent/5 border border-accent/20 rounded-lg p-6 text-left space-y-3">
-              <p className="text-sm font-medium text-foreground">What happens next:</p>
-              <ul className="text-sm text-muted-foreground space-y-2">
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-1">•</span>
-                  <span>We review your company information and verification documents</span>
+              <p className="text-sm font-semibold text-foreground">What happens next:</p>
+              <ul className="text-sm text-muted-foreground space-y-3">
+                <li className="flex items-start gap-3">
+                  <span className="text-accent font-bold">1</span>
+                  <span>Our team reviews your company information and verification documents</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-1">•</span>
-                  <span>Our team may schedule a call to discuss your funding needs</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent font-bold">2</span>
+                  <span>We may schedule a brief call to discuss your funding needs and business</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-1">•</span>
-                  <span>Once approved, your startup will be visible to investors on our platform</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent font-bold">3</span>
+                  <span>Once approved, your startup will be live and visible to investors (48-72 hours)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent font-bold">4</span>
+                  <span>You'll receive investor inquiries directly in your dashboard</span>
                 </li>
               </ul>
             </div>
 
-            <Button size="lg" className="bg-accent hover:bg-accent/90" onClick={() => (window.location.href = "/")}>
-              Back to Home
-            </Button>
+            <div className="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4 space-y-2">
+              <p className="text-sm font-semibold text-blue-700">Check your email</p>
+              <p className="text-xs text-blue-600">
+                We've sent a confirmation to <span className="font-medium">{formData.email}</span>. You'll receive
+                updates as your application is reviewed.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <Button size="lg" className="bg-accent hover:bg-accent/90" onClick={() => (window.location.href = "/")}>
+                Back to Home
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-border hover:bg-muted bg-transparent"
+                onClick={() => (window.location.href = "/startups")}
+              >
+                Browse Other Startups
+              </Button>
+            </div>
           </Card>
         </main>
 
@@ -166,7 +191,8 @@ export default function RegisterPage() {
         <div className="mb-12 animate-fade-in">
           <h1 className="text-4xl font-bold text-foreground mb-2">Register Your Startup</h1>
           <p className="text-muted-foreground">
-            Complete the form below to list your startup on our marketplace and connect with investors.
+            Complete the form below to list your startup and connect with investors. We'll verify your information
+            within 48-72 hours.
           </p>
         </div>
 
@@ -431,7 +457,7 @@ export default function RegisterPage() {
               size="lg"
               variant="outline"
               onClick={() => (window.location.href = "/")}
-              className="flex-1 border-border"
+              className="flex-1 border-border hover:bg-muted"
             >
               Cancel
             </Button>
